@@ -1,0 +1,96 @@
+﻿@model DynamicRoleBasedAccess.Models.CreateRoleViewModel
+@{
+    ViewBag.Title = "Create Role";
+    int i = 0, j = 0;
+}
+@section header {
+    @Styles.Render("~/Content/jquery.bonsai.css")
+}
+
+<h2>Create Role</h2>
+
+@using (Html.BeginForm("Create", "Role", FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        @Html.LabelFor(m => m.Name, new {@class = "col-md-2 control-label"})
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Name, new {@class = "form-control"})
+            @Html.ValidationMessageFor(m => m.Name, null, new {@class = "danger"})
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-md-2 control-label">Access List</label>
+        <div class="col-md-10">
+            <ol id="tree">
+                @foreach (var controller in Model.Controllers)
+                {
+                    string name;
+                    {
+                        name = string.IsNullOrWhiteSpace(controller.Description) ? controller.Name : controller.Description;
+                    }
+                    <li class="controller" data-value="@controller.Name">
+                        @name
+                        @if (controller.Actions.Any())
+                        {
+                            <ul>
+                                @foreach (var action in controller.Actions)
+                                {
+                                    {
+                                        name = string.IsNullOrWhiteSpace(action.Description) ? action.Name : action.Description;
+                                    }
+                                    <li data-value="@action.Name">@name</li>
+                                    j++;
+                                }
+                            </ul>
+                        }
+                        @{ j = 0; }
+                    </li>
+                    i++;
+                }
+            </ol>
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Create"/>
+        </div>
+    </div>
+}
+@section scripts{
+    @Scripts.Render("~/Scripts/jquery.bonsai.js")
+    <script>
+        $(function() {
+            $('#tree').bonsai({
+                expandAll: false,
+                checkboxes: true,
+                createInputs: 'checkbox'
+            });
+
+            $('form').submit(function() {
+                var i = 0, j = 0;
+                $('.controller > input[type="checkbox"]:checked, .controller > input[type="checkbox"]:indeterminate').each(function() {
+                    var ctrl = $(this);
+                    if ($(ctrl).prop('indeterminate')) {
+                        $(ctrl).prop("checked", true);
+                    }
+                    var cName = 'SelectedControllers[' + i + ']';
+                    $(ctrl).prop('name', cName + '.Name');
+                    $('ul > li > input[type="checkbox"]:checked', $(ctrl).parent()).each(function() {
+                        var acn = $(this);
+                        var aName = cName + '.Actions[' + j + '].Name';
+                        $(acn).prop('name', aName);
+                        j++;
+                    });
+                    j = 0;
+                    i++;
+                });
+
+                return true;
+            });
+        });
+    </script>
+}

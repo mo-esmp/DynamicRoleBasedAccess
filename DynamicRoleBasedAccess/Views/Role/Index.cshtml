@@ -1,0 +1,59 @@
+﻿@model IEnumerable<DynamicRoleBasedAccess.Models.ApplicationRole>
+
+@{
+    ViewBag.Title = "Role List";
+}
+
+<h2>Role List</h2>
+@Html.ActionLink("Create Role", "Create", "Role")
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(m => m.Name)
+            </th>
+            <th> </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var role in Model)
+            {
+            <tr>
+                <td>@Html.DisplayFor(m => role.Name)</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = role.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new {id = role.Id}, new { @class="delete-item" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts {
+    <script>
+        $('.delete-item').click(function (e) {
+            confirm("Are you sure want delete this role ?");
+            e.preventDefault();
+            var anchor = $(this);
+            var url = $(anchor).attr('href');
+            $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                //data: JSON.stringify({ id: id }),
+                dataType: 'json',
+                processData: false,
+                type: 'POST',
+                url: url,
+                success: function (result) {
+                    if (result === true) {
+                        $(anchor).parent('td').parent('tr').fadeOut('slow', function () {
+                            $(this).remove();
+                        });
+                    }
+                },
+                error: function (xmlHttpRequest, textStatus, errorThrown) {
+                    alert(textStatus + ' ' + xmlHttpRequest.status + " " + errorThrown);
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,36 @@
+﻿@model IEnumerable<DynamicRoleBasedAccess.Models.UserRoleViewModel>
+@{
+    ViewBag.Title = "Access List";
+}
+
+<h2>Access List</h2>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(m => m.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.Roles)
+            </th>
+            <th> </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+            {
+            <tr>
+                <td>@Html.DisplayFor(m => user.UserName)</td>
+                <td>
+                    @foreach (var role in user.Roles)
+                    {
+                        <span>@Html.DisplayFor(m => role)&nbsp;&nbsp;</span>
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = user.UserId })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
