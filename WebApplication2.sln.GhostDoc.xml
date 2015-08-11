@@ -35,10 +35,6 @@
     <ResolveCrefLinks>true</ResolveCrefLinks>
     <HeaderText />
     <FooterText />
-    <ConceptualContent>
-      <ContentLayout />
-      <MediaContent />
-    </ConceptualContent>
     <SelectedProjects />
   </HelpConfiguration>
 </HelpConfigurations>
